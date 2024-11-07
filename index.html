@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema RPG Assimilação</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background">
+        <div class="overlay"></div>
+        <div class="container">
+            <img src="assets/asslogo.png" alt="Logo do Sistema RPG" class="logo" href="https://assimilacao.com">
+            <h1>Selecione os dados que quer jogar:</h1>
+            <div id="diceArea">
+                <div class="dice" data-dice="d6">
+                    <span class="shadow"></span>
+                    <span class="edge"></span>
+                    <span class="front text"> D6</span>
+                </div>
+                <div class="dice" data-dice="d10">
+                    <span class="shadow"></span>
+                    <span class="edge"></span>
+                    <span class="front text"> D10</span>
+                </div>
+                <div class="dice" data-dice="d12">
+                    <span class="shadow"></span>
+                    <span class="edge"></span>
+                    <span class="front text"> D12</span>
+                </div>
+            </div>
+            <div id="selectedDiceArea">
+                <h3>Dados Selecionados:</h3>
+                <div id="selectedDiceList"></div>
+            </div>
+            <button id="rollButton">
+                <span class="shadow"></span>
+                <span class="edge"></span>
+                <span class="front text"> Rolar Dados
+                </span>
+              </button>
+            <div id="result"></div>
+            <div id="interpretation"></div>
+        </div>
+    </div>
+
+    <footer>
+        Made with
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#f64348" stroke="#f64348" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+        by
+        <a href="https://github.com/jooovi" target="_blank">@joaovitorg</a>
+    </footer>
+    
+<audio id="diceSound" src="assets/dice-142528.mp3" preload="auto"></audio>
+<script src="script.js"></script>
+</body>
+</html>
