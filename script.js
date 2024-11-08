@@ -54,18 +54,18 @@ document.querySelectorAll('.dice').forEach(dice => {
 });
 
 // Função para atualizar a lista de dados selecionados
-// Função para atualizar a lista de dados selecionados
 function updateSelectedDiceList() {
     const selectedDiceList = document.getElementById('selectedDiceList');
     selectedDiceList.innerHTML = ''; // Limpa a lista
 
+    let anyDiceSelected = false;
+
     for (const diceType in selectedDice) {
         for (let i = 0; i < selectedDice[diceType]; i++) {
+            anyDiceSelected = true; // Indica que há dados selecionados
             const diceElement = document.createElement('div');
             diceElement.classList.add('selected-dice');
-
-            // Adiciona um texto simples representando o dado selecionado
-            diceElement.innerHTML = `<span>${diceType.toUpperCase()}</span>`;  // Exibe o tipo do dado (D6, D10, D12)
+            diceElement.innerHTML = `<span>${diceType.toUpperCase()}</span>`;
 
             // Adiciona um evento para remover o dado da seleção
             diceElement.addEventListener('click', function() {
@@ -76,59 +76,144 @@ function updateSelectedDiceList() {
             selectedDiceList.appendChild(diceElement);
         }
     }
+
+    // Se não há mais dados selecionados, limpa o resultado e a interpretação
+    if (!anyDiceSelected) {
+        document.getElementById('result').innerHTML = "";
+        document.getElementById('interpretation').innerHTML = "";
+    }
 }
 
-// Função para rolar os dados e atualizar os resultados
+
+// Função para rolar os dados e exibir os resultados
 document.getElementById('rollButton').addEventListener('click', function() {
-    let results = [];
+    rolledResults = []; // Reinicia os resultados a cada rolagem
     let hasDice = false;
+    const results = [];
+
+    // Limpa o contêiner de interpretação e resultados ao re-rolar
+    document.getElementById('interpretation').innerHTML = '';
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = '';
 
     // Rola os dados selecionados
     for (const diceType in selectedDice) {
         for (let i = 0; i < selectedDice[diceType]; i++) {
             hasDice = true;
             const randomFace = Math.floor(Math.random() * Object.keys(diceData[diceType]).length) + 1;
-            const images = diceData[diceType][randomFace]; // Pode ter várias imagens
-            const description = `Número Rolado: ${randomFace}`; // Descrição do número que caiu
+            const images = diceData[diceType][randomFace];
 
-            // Cria um contêiner para cada conjunto de imagens e descrições
+            // Cria um contêiner para cada face rolada
             const diceContainer = document.createElement('div');
             diceContainer.classList.add('dice-container');
+            
+            // Salva o resultado e exibe as imagens
+            const faceResult = { images: images, diceType: diceType };
+            rolledResults.push(faceResult);
 
-            // Se a face não for "nada", cria as imagens
-            if (images[0] !== "assets/nada.png") {
-                images.forEach(imageSrc => {
+            // Adiciona as imagens e o texto "Nada" ao contêiner
+            images.forEach(imageSrc => {
+                if (imageSrc === "nada") {
+                    const textElement = document.createElement('span');
+                    textElement.textContent = "Nada"; // Exibe "Nada" como texto
+                    textElement.classList.add('dice-text');
+                    diceContainer.appendChild(textElement);
+                } else {
                     const imageElement = document.createElement('img');
                     imageElement.src = imageSrc;
-                    imageElement.alt = "Face do Dado";
                     imageElement.classList.add('dice-image');
                     diceContainer.appendChild(imageElement);
-                });
-            }
+                }
+            });
 
-            // Cria a descrição, independentemente da imagem
-            const descriptionElement = document.createElement('div');
-            descriptionElement.textContent = description;
-            descriptionElement.classList.add('dice-description');
-            diceContainer.appendChild(descriptionElement);
+            // Evento para selecionar o resultado final
+            diceContainer.addEventListener('click', function() {
+                displayFinalResult(faceResult); // Exibe apenas o resultado selecionado
+            });
 
-            // Adiciona o contêiner ao resultado
             results.push(diceContainer);
         }
     }
 
-    // Exibe os resultados
-    const resultDiv = document.getElementById('result');
-    const interpretationDiv = document.getElementById('interpretation');
+    // Exibe os resultados na tela
     if (hasDice) {
-        // Limpa resultados anteriores e adiciona os novos
-        resultDiv.innerHTML = '';
         results.forEach(result => {
             resultDiv.appendChild(result);
         });
-        interpretationDiv.innerHTML = "<b>Interpretação: </b>Baseado nas faces roladas, você pode determinar o resultado final.";
     } else {
         resultDiv.innerHTML = "Nenhum dado selecionado!";
-        interpretationDiv.innerHTML = "";
     }
 });
+
+// Função para exibir apenas o dado final selecionado e mostrar a contagem
+function displayFinalResult(finalResult) {
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = ''; // Limpa todos os outros resultados
+
+    // Cria um contêiner para o resultado final selecionado
+    const finalContainer = document.createElement('div');
+    finalContainer.classList.add('dice-container');
+    
+    finalResult.images.forEach(imageSrc => {
+        if (imageSrc === "nada") {
+            const textElement = document.createElement('span');
+            textElement.textContent = "Nada";
+            textElement.classList.add('dice-text');
+            finalContainer.appendChild(textElement);
+        } else {
+            const imageElement = document.createElement('img');
+            imageElement.src = imageSrc;
+            imageElement.classList.add('dice-image');
+            finalContainer.appendChild(imageElement);
+        }
+    });
+
+    resultDiv.appendChild(finalContainer);
+
+    // Calcula e exibe a contagem dos tipos de imagem
+    calculateResult(finalResult);
+}
+
+// Função para calcular e exibir a quantidade de sucessos, adaptações, pressões e nada
+function calculateResult(finalResult) {
+    let sucesso = 0;
+    let adaptacao = 0;
+    let pressao = 0;
+    let nada = 0;
+
+    // Classificação das imagens atualizada
+    const imageTypes = {
+        "assets/joaninha.png": "sucesso",      // Joaninha -> Sucesso
+        "assets/coruja.png": "pressao",        // Coruja -> Pressão
+        "assets/cervo.png": "adaptacao",       // Cervo -> Adaptação
+        "assets/nada.png": "nada"                         // "Nada" -> Nada
+    };
+
+    // Conta cada tipo de imagem
+    finalResult.images.forEach(imageSrc => {
+        switch (imageTypes[imageSrc]) {
+            case "sucesso":
+                sucesso++;
+                break;
+            case "adaptacao":
+                adaptacao++;
+                break;
+            case "pressao":
+                pressao++;
+                break;
+            case "nada":
+                nada++;
+                break;
+        }
+    });
+
+    // Exibe a contagem
+    const interpretationDiv = document.getElementById('interpretation');
+    interpretationDiv.innerHTML = `
+        <b>Resultado Final Selecionado:</b><br>
+        Sucesso: ${sucesso}<br>
+        Adaptação: ${adaptacao}<br>
+        Pressão: ${pressao}<br>
+        Nada: ${nada}
+    `;
+}
