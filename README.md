@@ -66,8 +66,7 @@ Cada rolagem é aleatória e exibe a figura correspondente ao resultado obtido.
 4. O resultado da rolagem será exibido com a figura correspondente.
 
 ## 🔗 Links Úteis
-- [Sistema de RPG Assimilação - Documentação Oficial](#) _(link)_([https://assimilacaorpg.pages.net.br/?utm_source=linktree])
-
+- [Sistema de RPG Assimilação - Documentação Oficial](#) _([link](https://assimilacaorpg.pages.net.br/?utm_source=linktree))_
 ---
 
 **Observação**: Este site é destinado ao uso pessoal e experimental para jogadores de **Assimilação**. Não possui funcionalidades adicionais para outros sistemas de RPG.
