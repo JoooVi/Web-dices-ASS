@@ -65,7 +65,7 @@ h1 {
     flex-wrap: wrap;
 }
 
-.dice {
+.dice, #okayButton {
     position: relative;
     border: none;
     background: transparent;
@@ -113,8 +113,8 @@ h1 {
 }
 
 #result {
-    font-size: 22px;
-    margin-top: 20px;
+    font-size: 14px;
+    margin-top: 2px;
     color: #ffffff;
 }
 
@@ -175,7 +175,7 @@ h1 {
     transition: transform 600ms cubic-bezier(.3, .7, .4, 1);
 }
 
-.dice:hover {
+.dice, .button:hover {
     filter: brightness(110%);
 }
 
@@ -241,26 +241,35 @@ h1 {
     margin-top: 20px;
 }
 
-#result {
-    display: flex;
-    flex-wrap: wrap;  /* Permite quebrar para a próxima linha */
-    justify-content: space-evenly;  /* Distribui as colunas de forma eficiente */
-    gap: 20px;  /* Espaço entre as caixas */
-    margin-top: 20px;
-}
-
 .dice-container {
     display: flex;
     flex-wrap: wrap;  /* Permite que os itens "quebrem" para a próxima linha */
     justify-content: space-evenly;  /* Distribui os itens com espaço entre eles */
     align-items: center;  /* Garante que os itens estejam centralizados verticalmente */
     margin: 10px;
-    background-color: rgba(104, 101, 101, 0.7); /* Fundo escuro semitransparente */
+    background-color: rgba(50, 50, 50, 0.8); /* Fundo escuro semitransparente */
     border-radius: 10px; /* Bordas arredondadas */
     padding: 15px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Sombra para destacar o bloco */
     width: 200px;  /* Largura fixa para cada caixa */
     min-height: 100px; /* Altura mínima para a caixa */
+}
+
+.selected {
+    border: 3px solid #ce0505; /* Borda dourada para indicar a seleção */
+    box-shadow: 0px 0px 10px rgba(255, 67, 67, 0.8); /* Sombra brilhante */
+    transform: scale(1.05); /* Aumenta levemente a carta */
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Suaviza a transição */
+}
+
+.selected-border {
+    border: 3px solid #ff0000; /* Borda dourada para indicar seleção */
+    box-shadow: 0px 0px 8px rgba(255, 30, 0, 0.8); /* Sombra leve para destaque */
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dice-container:hover {
+    transform: scale(1.03); /* Aumenta levemente ao passar o mouse */
 }
 
 .dice-container img {
@@ -271,70 +280,69 @@ h1 {
 
 .dice-description {
     text-align: center;  /* Centraliza a descrição */
-    font-size: 14px;  /* Tamanho maior para a descrição */
-    color: #fff;  /* Cor da descrição */
+    font-size: 12px;  /* Tamanho maior para a descrição */
+    color: #ff0000;  /* Cor da descrição */
     margin-top: 10px;  /* Espaço entre a caixa e a descrição */
     width: 200px; /* Alinha com a largura da caixa */
 }
 
+/* Botão de selecionar (inicialmente escondido) */
+#okayButton {
+    display: none;  /* Esconde o botão inicialmente */
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;  /* Transição suave para a opacidade */
+}
+
+/* Quando o botão for mostrado após o rolar */
+#okayButton.show {
+    display: inline-block;  /* Torna o botão visível */
+    opacity: 1;
+}
+
+
 /* Responsividade */
 /* Ajustes para melhorar a responsividade em telas menores */
-    
 @media (max-width: 768px) {
-        #dicearea {
-            width: 70px;  /* Ajuste do tamanho do botão para telas médias */
-            height: 70px;
-        }
-    
-        .dice img {
-            max-width: 50%;  /* Ajuste do tamanho da imagem */
-        }
-    
-        .dice span {
-            font-size: 12px;  /* Reduzindo o tamanho da fonte em dispositivos móveis */
-        }
-    }   
+    #dicearea {
+        width: 70px;  /* Ajuste do tamanho do botão para telas médias */
+        height: 70px;
+    }
+
+    .dice img {
+        max-width: 50%;  /* Ajuste do tamanho da imagem */
+    }
+
+    .dice span {
+        font-size: 12px;  /* Reduzindo o tamanho da fonte em dispositivos móveis */
+    }
+}   
 
 @media (max-width: 480px) {
 
-    .dice-container {
-        width: calc(50% - 10px);  /* Exibe 2 resultados por linha */
-    }
+.dice-container {
+    width: calc(50% - 10px);  /* Exibe 2 resultados por linha */
+}
 
-    .dice-image {
-        width: 40px;  /* Tamanho menor da imagem */
-        height: 40px;
-    }
+.dice-image {
+    width: 40px;  /* Tamanho menor da imagem */
+    height: 40px;
+}
 
-    .dice-description {
-        font-size: 8px;
-        text-align: center;  /* Tamanho menor para a descrição */
-    }
+.dice-description {
+    font-size: 8px;
+    text-align: center;  /* Tamanho menor para a descrição */
+}
 }
 
 .fade-out {
-    animation: fadeOut 1s ease-in-out forwards;
+animation: fadeOut 1s ease-in-out forwards;
 }
 
 @keyframes fadeOut {
-    0% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-    }
+0% {
+    opacity: 1;
 }
-
-footer {
-    background-color: #000000;
-    color: #bbbbbb;
-    text-align: center;
-    padding: 15px;
-    width: 100%;
-    bottom: 0;
-    left: 0;
-    box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.2);
-    font-size: 0.9em;
-    z-index: 2;
-    position: relative;
+100% {
+    opacity: 0;
+}
 }

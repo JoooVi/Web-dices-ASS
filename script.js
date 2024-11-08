@@ -7,7 +7,6 @@ const diceData = {
         5: ["assets/coruja.png", "assets/cervo.png"], 
         6: ["assets/joaninha.png"]
     },
-
     "d10": {
         1: ["assets/nada.png"],
         2: ["assets/nada.png"],
@@ -20,7 +19,6 @@ const diceData = {
         9: ["assets/joaninha.png", "assets/cervo.png", "assets/coruja.png"],
         10: ["assets/joaninha.png", "assets/joaninha.png", "assets/coruja.png"]
     },
-
     "d12": {
         1: ["assets/nada.png"],
         2: ["assets/nada.png"],
@@ -37,86 +35,81 @@ const diceData = {
     }
 };
 
-let selectedDice = { "d6": 0, "d10": 0, "d12": 0 }; // Contagem de dados selecionados
+let selectedDice = { "d6": 0, "d10": 0, "d12": 0 };
+let selectedResults = [];
+let rolledResults = [];
 
-// Função para adicionar ou remover dados
+// Seleção e desmarcação dos dados
 document.querySelectorAll('.dice').forEach(dice => {
     dice.addEventListener('click', function() {
         const diceType = this.getAttribute('data-dice');
         
-        // Adiciona o dado selecionado à lista de dados selecionados
-        if (selectedDice[diceType] < 10) { // Limita a seleção a 10 dados por tipo
+        if (selectedDice[diceType] < 10) {
             selectedDice[diceType] += 1;
-        } else {
+        } else if (selectedDice[diceType] > 0) {
             selectedDice[diceType] -= 1;
         }
-        updateSelectedDiceList(); // Atualiza a lista de dados selecionados
+        updateSelectedDiceList();
     });
 });
 
-// Função para atualizar a lista de dados selecionados
+// Atualiza a lista de dados selecionados
 function updateSelectedDiceList() {
     const selectedDiceList = document.getElementById('selectedDiceList');
-    selectedDiceList.innerHTML = ''; // Limpa a lista
+    selectedDiceList.innerHTML = '';
 
     let anyDiceSelected = false;
 
     for (const diceType in selectedDice) {
         for (let i = 0; i < selectedDice[diceType]; i++) {
-            anyDiceSelected = true; // Indica que há dados selecionados
+            anyDiceSelected = true;
             const diceElement = document.createElement('div');
             diceElement.classList.add('selected-dice');
             diceElement.innerHTML = `<span>${diceType.toUpperCase()}</span>`;
 
-            // Adiciona um evento para remover o dado da seleção
             diceElement.addEventListener('click', function() {
                 selectedDice[diceType] -= 1;
-                updateSelectedDiceList(); // Atualiza a lista de dados
+                updateSelectedDiceList();
             });
 
             selectedDiceList.appendChild(diceElement);
         }
     }
 
-    // Se não há mais dados selecionados, limpa o resultado e a interpretação
+    // Esconder o botão quando não houver dados selecionados
     if (!anyDiceSelected) {
         document.getElementById('result').innerHTML = "";
         document.getElementById('interpretation').innerHTML = "";
+        document.getElementById('okayButton').classList.remove('show');  // Esconde o botão
     }
 }
 
-
-// Função para rolar os dados e exibir os resultados
+// Rola os dados selecionados
 document.getElementById('rollButton').addEventListener('click', function() {
-    rolledResults = []; // Reinicia os resultados a cada rolagem
+    rolledResults = [];
     let hasDice = false;
     const results = [];
 
-    // Limpa o contêiner de interpretação e resultados ao re-rolar
     document.getElementById('interpretation').innerHTML = '';
     const resultDiv = document.getElementById('result');
     resultDiv.innerHTML = '';
 
-    // Rola os dados selecionados
     for (const diceType in selectedDice) {
         for (let i = 0; i < selectedDice[diceType]; i++) {
             hasDice = true;
             const randomFace = Math.floor(Math.random() * Object.keys(diceData[diceType]).length) + 1;
             const images = diceData[diceType][randomFace];
 
-            // Cria um contêiner para cada face rolada
             const diceContainer = document.createElement('div');
             diceContainer.classList.add('dice-container');
             
-            // Salva o resultado e exibe as imagens
-            const faceResult = { images: images, diceType: diceType };
+            const faceResult = { images: images, diceType: diceType, randomFace: randomFace };
             rolledResults.push(faceResult);
 
-            // Adiciona as imagens e o texto "Nada" ao contêiner
             images.forEach(imageSrc => {
-                if (imageSrc === "nada") {
+                if (imageSrc.includes("nada")) {
                     const textElement = document.createElement('span');
-                    textElement.textContent = "Nada"; // Exibe "Nada" como texto
+                    textElement.textContent = "Nada";
                     textElement.classList.add('dice-text');
                     diceContainer.appendChild(textElement);
                 } else {
@@ -127,70 +120,96 @@ document.getElementById('rollButton').addEventListener('click', function() {
                 }
             });
 
-            // Evento para selecionar o resultado final
+            // Adiciona o evento de clique para alternar a seleção de um resultado
             diceContainer.addEventListener('click', function() {
-                displayFinalResult(faceResult); // Exibe apenas o resultado selecionado
+                const index = selectedResults.findIndex(result => result === faceResult);
+                if (index !== -1) {
+                    selectedResults.splice(index, 1);
+                    diceContainer.classList.remove('selected-border');
+                } else {
+                    selectedResults.push(faceResult);
+                    diceContainer.classList.add('selected-border');
+                }
             });
 
             results.push(diceContainer);
         }
     }
 
-    // Exibe os resultados na tela
     if (hasDice) {
         results.forEach(result => {
             resultDiv.appendChild(result);
         });
+
+        // Mostrar o botão de seleção após rolar os dados
+        document.getElementById('okayButton').classList.add('show');
     } else {
         resultDiv.innerHTML = "Nenhum dado selecionado!";
     }
 });
 
-// Função para exibir apenas o dado final selecionado e mostrar a contagem
-function displayFinalResult(finalResult) {
+// Interpreta os resultados selecionados
+document.getElementById('okayButton').addEventListener('click', function() {
     const resultDiv = document.getElementById('result');
-    resultDiv.innerHTML = ''; // Limpa todos os outros resultados
+    resultDiv.innerHTML = '';
 
-    // Cria um contêiner para o resultado final selecionado
-    const finalContainer = document.createElement('div');
-    finalContainer.classList.add('dice-container');
-    
-    finalResult.images.forEach(imageSrc => {
-        if (imageSrc === "nada") {
-            const textElement = document.createElement('span');
-            textElement.textContent = "Nada";
-            textElement.classList.add('dice-text');
-            finalContainer.appendChild(textElement);
-        } else {
-            const imageElement = document.createElement('img');
-            imageElement.src = imageSrc;
-            imageElement.classList.add('dice-image');
-            finalContainer.appendChild(imageElement);
-        }
+    if (selectedResults.length === 0) {
+        resultDiv.innerHTML = "Nenhum resultado selecionado!";
+        return;
+    }
+
+    selectedResults.forEach(finalResult => {
+        const finalContainer = document.createElement('div');
+        finalContainer.classList.add('dice-container');
+
+        finalResult.images.forEach(imageSrc => {
+            if (imageSrc === "nada") {
+                const textElement = document.createElement('span');
+                textElement.textContent = "Nada";
+                textElement.classList.add('dice-text');
+                finalContainer.appendChild(textElement);
+            } else {
+                const imageElement = document.createElement('img');
+                imageElement.src = imageSrc;
+                imageElement.classList.add('dice-image');
+                finalContainer.appendChild(imageElement);
+            }
+        });
+
+        const interpretationContainer = document.createElement('div');
+        interpretationContainer.classList.add('interpretation-container');
+        
+        const { sucesso, adaptacao, pressao, nada } = calculateResult(finalResult);
+
+        interpretationContainer.innerHTML = `
+            <b>Resultado Final:</b><br>
+            Sucesso: ${sucesso}<br>
+            Adaptação: ${adaptacao}<br>
+            Pressão: ${pressao}<br>
+            Nada: ${nada}
+        `;
+
+        finalContainer.appendChild(interpretationContainer);
+        resultDiv.appendChild(finalContainer);
     });
 
-    resultDiv.appendChild(finalContainer);
+    selectedResults = [];
+});
 
-    // Calcula e exibe a contagem dos tipos de imagem
-    calculateResult(finalResult);
-}
-
-// Função para calcular e exibir a quantidade de sucessos, adaptações, pressões e nada
+// Calcula o resultado com base nas imagens
 function calculateResult(finalResult) {
     let sucesso = 0;
     let adaptacao = 0;
     let pressao = 0;
     let nada = 0;
 
-    // Classificação das imagens atualizada
     const imageTypes = {
-        "assets/joaninha.png": "sucesso",      // Joaninha -> Sucesso
-        "assets/coruja.png": "pressao",        // Coruja -> Pressão
-        "assets/cervo.png": "adaptacao",       // Cervo -> Adaptação
-        "assets/nada.png": "nada"                         // "Nada" -> Nada
+        "assets/joaninha.png": "sucesso",
+        "assets/coruja.png": "pressao",
+        "assets/cervo.png": "adaptacao",
+        "assets/nada.png": "nada"
     };
 
-    // Conta cada tipo de imagem
     finalResult.images.forEach(imageSrc => {
         switch (imageTypes[imageSrc]) {
             case "sucesso":
@@ -208,13 +227,5 @@ function calculateResult(finalResult) {
         }
     });
 
-    // Exibe a contagem
-    const interpretationDiv = document.getElementById('interpretation');
-    interpretationDiv.innerHTML = `
-        <b>Resultado Final Selecionado:</b><br>
-        Sucesso: ${sucesso}<br>
-        Adaptação: ${adaptacao}<br>
-        Pressão: ${pressao}<br>
-        Nada: ${nada}
-    `;
+    return { sucesso, adaptacao, pressao, nada };
 }
