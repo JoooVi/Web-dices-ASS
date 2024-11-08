@@ -1,12 +1,13 @@
 const diceData = {
     "d6": {
-        1: ["assets/nada.png"],  // Uma imagem
+        1: ["assets/nada.png"],  
         2: ["assets/nada.png"],
-        3: ["assets/coruja.png"], // Uma imagem
-        4: ["assets/coruja.png", "assets/cervo.png"], // Duas imagens
-        5: ["assets/coruja.png", "assets/cervo.png"], // Duas imagens
-        6: ["assets/joaninha.png"] // Uma imagem
+        3: ["assets/coruja.png"], 
+        4: ["assets/coruja.png", "assets/cervo.png"], 
+        5: ["assets/coruja.png", "assets/cervo.png"], 
+        6: ["assets/joaninha.png"]
     },
+
     "d10": {
         1: ["assets/nada.png"],
         2: ["assets/nada.png"],
@@ -19,6 +20,7 @@ const diceData = {
         9: ["assets/joaninha.png", "assets/cervo.png", "assets/coruja.png"],
         10: ["assets/joaninha.png", "assets/joaninha.png", "assets/coruja.png"]
     },
+
     "d12": {
         1: ["assets/nada.png"],
         2: ["assets/nada.png"],
@@ -34,7 +36,6 @@ const diceData = {
         12: ["assets/coruja.png", "assets/coruja.png"]
     }
 };
-
 
 let selectedDice = { "d6": 0, "d10": 0, "d12": 0 }; // Contagem de dados selecionados
 

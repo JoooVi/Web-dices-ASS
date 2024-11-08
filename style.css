@@ -175,6 +175,35 @@ h1 {
     transition: transform 600ms cubic-bezier(.3, .7, .4, 1);
 }
 
+.dice:hover {
+    filter: brightness(110%);
+}
+
+.dice:hover .front {
+    transform: translateY(-6px);
+    transition: transform 250ms cubic-bezier(.3, .7, .4, 1.5);
+}
+
+.dice:active .front {
+    transform: translateY(-2px);
+    transition: transform 34ms;
+}
+
+.dice:hover .shadow {
+    transform: translateY(4px);
+    transition: transform 250ms cubic-bezier(.3, .7, .4, 1.5);
+}
+
+.dice:active .shadow {
+    transform: translateY(1px);
+    transition: transform 34ms;
+}
+
+.dice:focus:not(:focus-visible) {
+    outline: none;
+}
+
+
 #rollButton:hover {
     filter: brightness(110%);
 }
@@ -295,7 +324,6 @@ h1 {
         opacity: 0;
     }
 }
-
 
 footer {
     background-color: #000000;
